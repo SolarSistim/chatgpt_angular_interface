@@ -13,7 +13,7 @@ export class ChatgptComponent {
   textFieldRef!: ElementRef<HTMLInputElement>;
 
   apiUrl = 'https://api.openai.com/v1/completions'; // Replace with your OpenAI API endpoint
-  apiKey = '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'; // Replace with your OpenAI API key
+  apiKey = '<OPENAI API KEY>'; // Replace with your OpenAI API key
   response: string | undefined;
   textField: any;
 
