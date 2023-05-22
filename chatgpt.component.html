@@ -1,0 +1,109 @@
+<div class="container mt-5">
+    <div class="input-group mb-3">
+        <!-- THe main input -->
+        <input 
+            type="text" 
+            class="form-control" 
+            placeholder="Ask ChatGPT a question" 
+            aria-label="Ask ChatGPT a question" 
+            aria-describedby="button-addon2" 
+            (keyup)="getQuestion($event)"
+            id="questionInput"
+            (keydown.enter)="sendOpenAIRequest()"
+            #questionField
+            style="min-height: 50px;">
+            
+        <!-- The DESKTOP dropdown button -->
+        <button 
+            class="btn btn-secondary dropdown-toggle btn-yellow-custom border border-dark d-none d-lg-block"
+            type="button" 
+            data-bs-toggle="dropdown" 
+            aria-expanded="false">
+                Temperature (Current: {{ this.temp }})
+            </button>
+        <!-- The DESKTOP dropdown menu -->
+        <ul class="dropdown-menu">
+            <li><span class="dropdown-item" href="#" (click)="setTemp(0.0)">0.0</span></li>
+            <li><span class="dropdown-item" href="#" (click)="setTemp(0.1)">0.1</span></li>
+            <li><span class="dropdown-item" href="#" (click)="setTemp(0.2)">0.2</span></li>
+            <li><span class="dropdown-item" href="#" (click)="setTemp(0.3)">0.3</span></li>
+            <li><span class="dropdown-item" href="#" (click)="setTemp(0.4)">0.4</span></li>
+            <li><span class="dropdown-item" href="#" (click)="setTemp(0.5)">0.5</span></li>
+            <li><span class="dropdown-item" href="#" (click)="setTemp(0.6)">0.6</span></li>
+            <li><span class="dropdown-item" href="#" (click)="setTemp(0.7)">0.7</span></li>
+            <li><span class="dropdown-item" href="#" (click)="setTemp(0.8)">0.8</span></li>
+            <li><span class="dropdown-item" href="#" (click)="setTemp(0.9)">0.9</span></li>
+            <li><span class="dropdown-item" href="#" (click)="setTemp(1.0)">1.0</span></li>
+          </ul>
+        <!-- The Ask button-->
+        <button 
+            class="btn btn-primary btn-yellow-custom" 
+            type="button" 
+            id="button-addon2" 
+            (click)="sendOpenAIRequest()"
+            style="min-width: 75px;">
+                Ask
+            </button>
+      </div>
+
+      <div class="row">
+        <div class="col">
+        <!-- The MOBILE dropdown button -->
+        <button 
+            class="btn btn-secondary dropdown-toggle btn-yellow-custom border border-dark d-lg-none w-100 mb-3"
+            type="button" 
+            data-bs-toggle="dropdown" 
+            aria-expanded="false">
+                Temperature (Current: {{ this.temp }})
+          </button>
+          <ul class="dropdown-menu">
+            <li><span class="dropdown-item" href="#" (click)="setTemp(0.0)">0.0</span></li>
+            <li><span class="dropdown-item" href="#" (click)="setTemp(0.1)">0.1</span></li>
+            <li><span class="dropdown-item" href="#" (click)="setTemp(0.2)">0.2</span></li>
+            <li><span class="dropdown-item" href="#" (click)="setTemp(0.3)">0.3</span></li>
+            <li><span class="dropdown-item" href="#" (click)="setTemp(0.4)">0.4</span></li>
+            <li><span class="dropdown-item" href="#" (click)="setTemp(0.5)">0.5</span></li>
+            <li><span class="dropdown-item" href="#" (click)="setTemp(0.6)">0.6</span></li>
+            <li><span class="dropdown-item" href="#" (click)="setTemp(0.7)">0.7</span></li>
+            <li><span class="dropdown-item" href="#" (click)="setTemp(0.8)">0.8</span></li>
+            <li><span class="dropdown-item" href="#" (click)="setTemp(0.9)">0.9</span></li>
+            <li><span class="dropdown-item" href="#" (click)="setTemp(1.0)">1.0</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Begin reponse length configurator -->
+      <div class="form-check-inline">
+        <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" checked (click)="setLength('short')">
+        <label class="form-check-label text-white" for="flexRadioDefault1">
+          &nbsp;Short response
+        </label>
+      </div>
+      <div class="form-check-inline">
+        <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" (click)="setLength('intermediate')">
+        <label class="form-check-label text-white" for="flexRadioDefault2">
+            &nbsp;Intermediate response
+        </label>
+      </div>
+      <div class="form-check-inline">
+        <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault3" (click)="setLength('detailed')">
+        <label class="form-check-label text-white" for="flexRadioDefault3">
+            &nbsp;Detailed response
+        </label>
+      </div>
+    <!-- begin answer area -->
+    <div class="row mt-3">
+        <div class="col-md-12">
+        <div *ngIf="this.answer" class="alert alert-info" role="alert">
+            {{ this.answer }}
+          </div>
+        </div>
+    </div>
+    <span class="text-white small" *ngIf="this.answer">Prompt tokens: <span style="color: #f5c518;">{{ this.prompt_tokens }}</span> &nbsp;&nbsp;</span>
+    <span class="text-white small" *ngIf="this.answer">Completion tokens: <span style="color: #f5c518;">{{ this.completion_tokens }}</span> &nbsp;&nbsp;</span>
+    <span class="text-white small" *ngIf="this.answer">Total tokens: <span style="color: #f5c518;">{{ this.total_tokens }}</span> &nbsp;&nbsp;</span>
+    <span class="text-white small" *ngIf="this.answer">This query cost: <span style="color: #f5c518;">${{ this.total_cost | number: '1.3-3' }}</span> &nbsp;</span>
+    <span class="text-white small mb-3">Using ChatGPT Curie model at <span style="color: #f5c518;">$0.0003</span> per token.</span><br/>
+    <button *ngIf="this.answer" class="btn btn-primary btn-yellow-custom mt-3" style="margin-right: 5px;" (click)="speak()">Speak</button>
+    <button *ngIf="this.answer" class="btn btn-primary btn-yellow-custom mt-3" (click)="clear()">Clear</button><br/>
+</div>
